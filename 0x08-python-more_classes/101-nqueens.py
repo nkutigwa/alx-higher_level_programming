@@ -1,50 +1,60 @@
-#!/usr/bin/python3
-'''Module for N Queens problem.'''
+global N 
+N = 4
 
+def printSolution(board): 
+	for i in range(N): 
+		for j in range(N): 
+			print(board[i][j],end=",")
+		print(" ")
+  
+def isSafe(board, row, col): 
 
-def isSafe(board, row, col):
-    '''Checks if position is safe from attack.
-    Args:
-        board: The board state.
-        row: The row to check.
-        col: The colum to check.
-    '''
-    for c in range(col):
-        if board[c] is row or abs(board[c] - row) is abs(c - col):
-            return False
-    return True
+	# Check this row on left side 
+	for i in range(col): 
+		if board[row][i] == 1: 
+			return False
 
+	# Check upper diagonal on left side 
+	for i, j in zip(range(row, -1, -1), range(col, -1, -1)): 
+		if board[i][j] == 1: 
+			return False
 
-def checkBoard(board, col):
-    '''Checks the board state column by column using backtracking.
-    Args:
-        board: The board state.
-        col: The current colum to check.
-    '''
-    n = len(board)
-    if col is n:
-        print(str([[c, board[c]] for c in range(n)]))
-        return
+	# Check lower diagonal on left side 
+	for i, j in zip(range(row, N, 1), range(col, -1, -1)): 
+		if board[i][j] == 1: 
+			return False
 
-    for row in range(n):
-        if isSafe(board, row, col):
-            board[col] = row
-            checkBoard(board, col + 1)
+	return True
 
-if __name__ == "__main__":
-    import sys
+def solveNQUtil(board, col): 
+	if col >= N: 
+		return True
+	for i in range(N): 
 
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
-    n = 0
-    try:
-        n = int(sys.argv[1])
-    except:
-        print("N must be a number")
-        sys.exit(1)
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
-    board = [0 for col in range(n)]
-    checkBoard(board, 0)
+		if isSafe(board, i, col): 
+			# Place this queen in board[i][col] 
+			board[i][col] = 1
+
+			# recur to place rest of the queens 
+			if solveNQUtil(board, col + 1) == True: 
+				return True
+			board[i][col] = 0
+
+	return False
+def solveNQ(): 
+	board = [ [0, 0, 0, 0], 
+			[0, 0, 0, 0], 
+			[0, 0, 0, 0], 
+			[0, 0, 0, 0] 
+			] 
+
+	if solveNQUtil(board, 0) == False: 
+		print("Solution does not exist")
+		return False
+
+	printSolution(board) 
+	return True
+
+# driver program to test above function 
+solveNQ() 
+
