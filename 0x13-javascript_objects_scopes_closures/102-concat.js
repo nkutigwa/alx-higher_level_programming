@@ -1,10 +1,30 @@
 #!/usr/bin/node
-
+const argv = process.argv;
 const fs = require('fs');
+const fileA = argv[2];
+const fileB = argv[3];
+const fileC = argv[4];
 
-const contentA = fs.readFileSync(process.argv[2], 'utf8', function (err, result) { if (err) console.log('error', err); });
-const contentB = fs.readFileSync(process.argv[3], 'utf8', function (err, result) { if (err) console.log('error', err); });
+const fileRead = (file) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
 
-const contentC = contentA.concat(contentB);
+const promises = [fileA, fileB].map(fileRead);
 
-fs.writeFile(process.argv[4], contentC, 'utf8', function (err, result) { if (err) console.log('error', err); });
+Promise
+  .all(promises)
+  .then(resolve => {
+    const Concat = resolve.join('');
+    fs.writeFile(fileC, Concat, (err) => {
+      if (err) throw err;
+    });
+  })
+  .catch(err => console.log(err));
