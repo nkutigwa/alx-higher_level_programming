@@ -1,4 +1,11 @@
 #!/usr/bin/node
-const list = require('./100-data.js').list;
+// imports array from data file; creates new array with map; prints both
+const list = require('./100-data').list;
+
 console.log(list);
-console.log(list.map((item, index) => item * index));
+if (Array.isArray(list) && list.every(elem => typeof elem === 'number')) {
+  const newList = list.map((value, index) => value * index);
+  console.log(newList);
+} else {
+  console.log(undefined);
+}
